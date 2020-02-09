@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-k = 1500
+k = 1000
 n = 11 * k
-a = 1        # Начальные
-b = 1        # условия
+a = 5        # Начальные
+b = -2        # условия
 
 x = np.linspace(0, 1, n).reshape(n, 1)
 y = np.empty((n, 2))
@@ -12,7 +12,8 @@ y[0] = [a, b]
 h = 1 / (n - 1)     # Шаг
 
 F1 = np.linalg.inv(np.array([[1, 0], [0, 1]]) - h / 2 * np.array([[99, 40], [250, 99]]))
-Fn = np.linalg.inv(np.array([[1, 0], [0, 1]]) - 5 * h / 12 * np.array([[99, 40], [250, 99]]))
+F2 = np.linalg.inv(np.array([[1, 0], [0, 1]]) - 5 * h / 12 * np.array([[99, 40], [250, 99]]))
+Fn = np.linalg.inv(np.array([[1, 0], [0, 1]]) - 3 * h / 8 * np.array([[99, 40], [250, 99]]))
 
 def f(y):
     f = np.empty(2)
@@ -21,8 +22,9 @@ def f(y):
     return f
 
 y[1] = (y[0] + h / 2 * f(y[0])) @ F1
+y[2] = (y[1] + h / 12 * (8 * f(y[1]) - f(y[0]))) @ F2
 
-for i in range(1, n - 1):
+for i in range(2, n - 1):
     # k1 = f(y[i]) * h / 6
     # k2 = f(y[i] + h / 2 * k1) * h / 6
     # k3 = f(y[i] + h / 2 * k2) * h / 6
@@ -32,7 +34,10 @@ for i in range(1, n - 1):
 
     # y[i + 1] = (y[i] + h / 2 * f(y[i])) @ F1              #   Неявный одношаговый Адамса
 
-    y[i + 1] = (y[i] + h / 12 * (8 * f(y[i]) - f(y[i - 1]))) @ Fn
+    # y[i + 1] = (y[i] + h / 12 * (8 * f(y[i]) - f(y[i - 1]))) @ F2
+
+    y[i + 1] = (y[i] + h / 24 * (19 * f(y[i]) - 5 * f(y[i - 1]) + f(y[i - 2]))) @ Fn    # порядок точности 4
+
 
 
 c1 = (2 * a - 5 * b) / 20
