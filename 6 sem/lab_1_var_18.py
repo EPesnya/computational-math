@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-k = 1000
+k = 1
 n = 11 * k
 a = 5        # Начальные
-b = -2        # условия
+b = 2        # условия
 
 x = np.linspace(0, 1, n).reshape(n, 1)
 y = np.empty((n, 2))
@@ -32,7 +32,7 @@ for i in range(2, n - 1):
 
     # y[i + 1] = y[i] + (k1 + 2 * k2 + 2 * k3 + k4)       #   Рунге-Кутты 4
 
-    # y[i + 1] = (y[i] + h / 2 * f(y[i])) @ F1              #   Неявный одношаговый Адамса
+    # y[i + 1] = (y[i] + h / 2 * f(y[i])) @ F1              #   Неявный одношаговый Адамса-Моултона
 
     # y[i + 1] = (y[i] + h / 12 * (8 * f(y[i]) - f(y[i - 1]))) @ F2
 
@@ -49,11 +49,23 @@ y_a = c1 * np.exp(-x) @ np.array([[5, -2]]) \
 print("A = {}; B = {}\nC1 = {}; C2 = {}\n".format(a, b, c1, c2))
 print("{:^6s}{:^15s}{:^15s}{:^15s}{:^15s}{:^15s}{:^15s}".format("X", "Y1'", "Y1", "Y2'", "Y2", "d", "e"))
 
-for i in range(n):
-    d = max([abs(y[i, 0] - y_a[i, 0]), abs(y[i, 1] - y_a[i, 1])])
-    print("{:2.2f}{:15E}{:15E}{:15E}{:15E}{:15E}{:15E}"
-    .format(x[i, 0], y[i, 0], y_a[i, 0], y[i, 1], y_a[i, 1], d, d / y[i, 0]))
+for i in range(11):
+    j = i * k
+    d = max([abs(y[j, 0] - y_a[j, 0]), abs(y[j, 1] - y_a[j, 1])])
+    print("{:2.1f}{:15E}{:15E}{:15E}{:15E}{:15E}{:15E}"
+    .format(i / 10, y[j, 0], y_a[j, 0], y[j, 1], y_a[j, 1], d, d / y[j, 0]))
 
-plt.plot(x, y_a[:, 0])
-plt.plot(x, y[:, 0])
+# plt.plot(x, y_a[:, 0])
+# plt.plot(x, y[:, 0])
+# plt.show()
+
+t = np.linspace(0, 2 * np.pi, 100)
+e = np.exp(1j * t)
+
+def mu(h):
+    return 24 * (h**3 - h**2) / (9 * h**3 + 19 * h**2 - 5 * h + 1)
+
+plt.fill(mu(e).real, mu(e).imag, (0.4, 0.6, 0.8)) 
+plt.grid(True)
+plt.axis('equal')
 plt.show()
