@@ -60,11 +60,13 @@ for i in range(11):
 # plt.show()
 
 t = np.linspace(0, 2 * np.pi, 100)
-e = np.exp(1j * t)
+e = 1 * np.exp(1j * t)
 
 def mu(h):
     return 24 * (h**3 - h**2) / (9 * h**3 + 19 * h**2 - 5 * h + 1)
 
+plt.fill(mu(e).real, mu(e).imag, (0.4, 0.6, 0.8)) 
+e = 0.7 * np.exp(1j * t)
 plt.fill(mu(e).real, mu(e).imag, (0.4, 0.6, 0.8)) 
 plt.grid(True)
 plt.axis('equal')
